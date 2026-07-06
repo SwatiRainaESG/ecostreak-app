@@ -15,17 +15,17 @@ The platform goes beyond standard carbon tracking by integrating multi-metric in
 ## Key Core Features
 
 ### 1. Multi-Category Sustainability Search Engine
-As shown in image_ecfa7e.png and image_ecfaba.png, the interface provides a rapid-search registry across key corporate and consumer categories such as Food, Beverages, Transportation, Travel, and Packaging. Products are indexed with automated color-coded letter grades to show immediate sustainability health.
+Ecostreak provides a rapid-search registry across key corporate and consumer categories such as Food, Beverages, Transportation, Travel, and Packaging. Products are indexed with automated color-coded letter grades to show immediate sustainability health.
 
 ### 2. Dual-Product EcoLens Comparative Analytics
-As shown in image_ecfafd.png, the app features an "EcoLens Label" diagnostic component that allows users to compare two competing product choices. The tool breaks down trade-offs across four environmental pillars:
+The app features an "EcoLens Label" diagnostic component that allows users to compare two competing product choices. The tool breaks down trade-offs across four environmental pillars:
 * Climate Impact (kg CO2e)
 * Water Footprint (Liters consumed)
 * Waste Generation
 * Circularity and End-of-Life Destination (e.g., Recycle vs. Landfill)
 
 ### 3. Quantitative Activity Logger and Dashboard
-As shown in image_ecfde3.png, the application features an analytics dashboard that aggregates user inputs to compute:
+The Ecostreak application features an analytics dashboard that aggregates user inputs to compute:
 * Real-time daily environmental scoring and weekly trend lines.
 * Cumulative mass of CO2e avoided against industry averages.
 * Milestone tracking, establishing behavioral sustainability habits via "streaks" and resource-saving targets.
