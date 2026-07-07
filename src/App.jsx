@@ -296,7 +296,7 @@ function EcoLabel({ product, size = "full" }) {
         <div className={`flex-1 ${compact ? "p-3" : "p-4"} border-t border-r border-b border-stone-200 rounded-r-lg`}>
           {!compact && (
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] tracking-widest uppercase text-stone-400 font-medium">EcoLens Label</span>
+              <span className="text-[11px] tracking-widest uppercase text-stone-400 font-medium">EcoStreak Label</span>
               <Info size={13} className="text-stone-300" />
             </div>
           )}
@@ -352,7 +352,7 @@ function TopNav({ view, setView }) {
           <div className="w-7 h-7 rounded-md bg-emerald-700 text-white flex items-center justify-center">
             <Leaf size={15} />
           </div>
-          EcoLens
+          EcoStreak
         </button>
         <div className="flex gap-1">
           {items.map((it) => (
@@ -749,7 +749,7 @@ function StatCard({ label, value, sub, icon: Icon }) {
 /*  APP SHELL                                                              */
 /* ---------------------------------------------------------------------- */
 
-export default function EcoLensDemo() {
+export default function EcoStreakDemo() {
   const [view, setView] = useState("home");
   const [productId, setProductId] = useState(null);
 
