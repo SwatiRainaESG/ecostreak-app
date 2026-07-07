@@ -8,225 +8,55 @@ import {
   PieChart, Pie, Cell, BarChart, Bar
 } from "recharts";
 
+import foodData from "./data/food.json";
+import homeData from "./data/home.json";
+import fashionData from "./data/fashion.json";
+import travelData from "./data/travel.json";
+import electronicsData from "./data/electronics.json";
+import personalCareData from "./data/personal-care.json";
+import dailyData from "./data/daily.json";
+
 /* ---------------------------------------------------------------------- */
-/*  MOCK DATA                                                              */
+/*  DATA — merged from JSON files in src/data/                            */
 /* ---------------------------------------------------------------------- */
 
-const CATEGORIES = ["Beverages", "Cafés", "Food", "Packaging", "Home", "Transportation", "Travel", "Fashion", "Electronics", "Digital Services", "Personal Care", "Hotels", "Restaurants"];
-
+// Merge every category's product array into one flat list.
+// When you add another category JSON file, add its import above and
+// spread it into this array too.
 const PRODUCTS = [
-  { id: "oat-milk", name: "Oat Milk", brand: "Generic", category: "Beverages", country: "Sweden", score: 88,
-    carbon: 0.4, water: 48, waste: 8, packaging: "Recyclable carton", recyclable: true, lifespan: null,
-    circularity: 74, confidence: 0.86, source: "Agribalyse", updated: "Jun 2026",
-    dims: { climate: 88, water: 80, waste: 78, circularity: 74, biodiversity: 70, resource: 82 },
-    insight: "Plant-based milks generate a fraction of the emissions of dairy, mainly from oat farming and light processing.",
-    alt: [] },
-  { id: "cow-milk", name: "Whole Cow Milk", brand: "Generic", category: "Beverages", country: "USA", score: 46,
-    carbon: 3.2, water: 628, waste: 6, packaging: "Recyclable carton", recyclable: true, lifespan: null,
-    circularity: 52, confidence: 0.9, source: "ecoinvent", updated: "May 2026",
-    dims: { climate: 32, water: 30, waste: 70, circularity: 52, biodiversity: 44, resource: 40 },
-    insight: "Dairy's footprint is dominated by methane from cattle and the water/land needed to grow feed.",
-    alt: ["oat-milk"] },
-  { id: "local-latte", name: "Oat Latte (reusable cup)", brand: "Local Café", category: "Cafés", country: "—", score: 81,
-    carbon: 0.5, water: 55, waste: 4, packaging: "Reusable cup", recyclable: true, lifespan: null,
-    circularity: 88, confidence: 0.62, source: "Category estimate", updated: "Jun 2026",
-    dims: { climate: 82, water: 76, waste: 90, circularity: 88, biodiversity: 68, resource: 74 },
-    insight: "Bringing or using a reusable cup removes almost all packaging waste from a café order.",
-    alt: [] },
-  { id: "chain-latte", name: "Chain Latte (disposable cup)", brand: "Starbucks", category: "Cafés", country: "—", score: 58,
-    carbon: 1.1, water: 210, waste: 34, packaging: "Single-use cup + lid", recyclable: false, lifespan: null,
-    circularity: 38, confidence: 0.7, source: "Category estimate", updated: "Jun 2026",
-    dims: { climate: 60, water: 55, waste: 30, circularity: 38, biodiversity: 58, resource: 56 },
-    insight: "Dairy milk and a non-recyclable cup-lid combo pull this down versus the reusable-cup version.",
-    alt: ["local-latte"] },
-  { id: "beef-burger", name: "Beef Burger", brand: "Generic", category: "Food", country: "USA", score: 22,
-    carbon: 6.6, water: 1450, waste: 12, packaging: "Paper wrap", recyclable: true, lifespan: null,
-    circularity: 40, confidence: 0.92, source: "Agribalyse · IPCC", updated: "Apr 2026",
-    dims: { climate: 12, water: 14, waste: 55, circularity: 40, biodiversity: 18, resource: 30 },
-    insight: "Beef is the single highest-impact common food, driven by methane and land use for grazing and feed.",
-    alt: ["lentil-bowl", "chicken-breast"] },
-  { id: "lentil-bowl", name: "Lentil Bowl", brand: "Generic", category: "Food", country: "Canada", score: 92,
-    carbon: 0.5, water: 190, waste: 5, packaging: "None / bulk", recyclable: true, lifespan: null,
-    circularity: 90, confidence: 0.85, source: "Agribalyse", updated: "May 2026",
-    dims: { climate: 94, water: 86, waste: 92, circularity: 90, biodiversity: 88, resource: 90 },
-    insight: "Legumes fix their own nitrogen and need little water or land, making them one of the lowest-impact proteins.",
-    alt: [] },
-  { id: "chicken-breast", name: "Chicken Breast", brand: "Generic", category: "Food", country: "USA", score: 61,
-    carbon: 1.9, water: 410, waste: 8, packaging: "Plastic tray", recyclable: false, lifespan: null,
-    circularity: 46, confidence: 0.88, source: "Agribalyse", updated: "May 2026",
-    dims: { climate: 58, water: 62, waste: 40, circularity: 46, biodiversity: 60, resource: 58 },
-    insight: "Poultry is far lower-impact than beef, but the plastic tray and feed-grain footprint keep it out of the top tier.",
-    alt: ["lentil-bowl"] },
-  { id: "plastic-bottle", name: "Plastic Water Bottle (500ml)", brand: "Generic", category: "Packaging", country: "—", score: 28,
-    carbon: 0.22, water: 3, waste: 22, packaging: "Single-use PET", recyclable: true, lifespan: "Single use",
-    circularity: 30, confidence: 0.8, source: "EEA", updated: "Mar 2026",
-    dims: { climate: 45, water: 90, waste: 10, circularity: 22, biodiversity: 30, resource: 20 },
-    insight: "Low water use per bottle is outweighed by single-use plastic waste and virgin petrochemical inputs.",
-    alt: ["steel-bottle"] },
-  { id: "steel-bottle", name: "Reusable Steel Bottle", brand: "Generic", category: "Home", country: "—", score: 96,
-    carbon: 0.02, water: 0.4, waste: 0.1, packaging: "None (reused)", recyclable: true, lifespan: "10+ years",
-    circularity: 98, confidence: 0.75, source: "Category estimate", updated: "Jun 2026",
-    dims: { climate: 97, water: 96, waste: 99, circularity: 98, biodiversity: 90, resource: 94 },
-    insight: "Amortized over hundreds of refills, a steel bottle's per-use footprint is negligible.",
-    alt: [] },
-  { id: "train-ticket", name: "Domestic Train (300km)", brand: "—", category: "Transportation", country: "—", score: 89,
-    carbon: 6, water: 2, waste: 0.1, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.83, source: "DEFRA", updated: "Apr 2026",
-    dims: { climate: 90, water: 95, waste: 96, circularity: 80, biodiversity: 85, resource: 88 },
-    insight: "Electrified rail is one of the lowest-carbon ways to move a person any real distance.",
-    alt: [] },
-  { id: "flight", name: "Domestic Flight (300km)", brand: "—", category: "Travel", country: "—", score: 12,
-    carbon: 55, water: 4, waste: 0.3, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.87, source: "DEFRA · EEA", updated: "Apr 2026",
-    dims: { climate: 5, water: 90, waste: 88, circularity: 60, biodiversity: 40, resource: 20 },
-    insight: "Short-haul flights burn most fuel in takeoff/climb, giving them a disproportionate footprint per km.",
-    alt: ["train-ticket"] },
-  { id: "running-shoes", name: "Running Shoes", brand: "Generic", category: "Fashion", country: "Vietnam", score: 44,
-    carbon: 14, water: 4400, waste: 0.3, packaging: "Cardboard box", recyclable: true, lifespan: "12–18 months",
-    circularity: 38, confidence: 0.6, source: "PEF estimate", updated: "Feb 2026",
-    dims: { climate: 42, water: 30, waste: 50, circularity: 38, biodiversity: 46, resource: 44 },
-    insight: "Synthetic foams and glued, multi-material construction make most sneakers hard to recycle or repair.",
-    alt: ["recycled-jacket"] },
-  { id: "recycled-jacket", name: "Recycled Fleece Jacket", brand: "Patagonia", category: "Fashion", country: "USA", score: 79,
-    carbon: 8, water: 900, waste: 0.2, packaging: "Minimal", recyclable: true, lifespan: "5+ years",
-    circularity: 84, confidence: 0.7, source: "EPD", updated: "Jan 2026",
-    dims: { climate: 74, water: 70, waste: 82, circularity: 84, biodiversity: 76, resource: 78 },
-    insight: "Recycled polyester and a take-back repair program meaningfully extend this garment's usable life.",
-    alt: [] },
-  { id: "iphone", name: "Smartphone", brand: "Generic", category: "Electronics", country: "China", score: 52,
-    carbon: 70, water: 13000, waste: 0.15, packaging: "Recyclable box", recyclable: false, lifespan: "3–4 years",
-    circularity: 44, confidence: 0.65, source: "PEF · EPD", updated: "Mar 2026",
-    dims: { climate: 40, water: 34, waste: 60, circularity: 44, biodiversity: 50, resource: 36 },
-    insight: "Most of a phone's footprint is locked in at manufacturing — critical minerals and chip fabrication.",
-    alt: [] },
-  { id: "netflix-hour", name: "Streaming (1 hour, HD)", brand: "Netflix", category: "Digital Services", country: "—", score: 90,
-    carbon: 0.06, water: 0.5, waste: 0, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.55, source: "Category estimate", updated: "Jun 2026",
-    dims: { climate: 92, water: 94, waste: 100, circularity: 80, biodiversity: 88, resource: 86 },
-    insight: "Data-center efficiency has fallen sharply per hour streamed, though renewable mix varies by region.",
-    alt: [] },
-
-  /* ---------------- Fashion ---------------- */
-  { id: "cotton-tshirt", name: "Organic Cotton T-Shirt", brand: "Generic", category: "Fashion", country: "India", score: 68,
-    carbon: 4.3, water: 2700, waste: 0.1, packaging: "Minimal", recyclable: true, lifespan: "2–3 years",
-    circularity: 60, confidence: 0.68, source: "PEF estimate", updated: "Feb 2026",
-    dims: { climate: 62, water: 46, waste: 74, circularity: 60, biodiversity: 58, resource: 64 },
-    insight: "Organic cotton skips synthetic fertilizer, but growing cotton is still water-intensive.",
-    alt: [] },
-  { id: "fast-fashion-dress", name: "Fast-Fashion Dress", brand: "Generic", category: "Fashion", country: "Bangladesh", score: 26,
-    carbon: 17, water: 900, waste: 0.3, packaging: "Plastic poly bag", recyclable: false, lifespan: "~6 months",
-    circularity: 20, confidence: 0.55, source: "Category estimate", updated: "Jan 2026",
-    dims: { climate: 24, water: 55, waste: 22, circularity: 16, biodiversity: 30, resource: 22 },
-    insight: "Synthetic fibers keep water use moderate, but a short wear life and low garment recovery make this a low scorer overall.",
-    alt: ["cotton-tshirt", "recycled-jacket"] },
-  { id: "leather-boots", name: "Leather Boots", brand: "Generic", category: "Fashion", country: "Italy", score: 39,
-    carbon: 15, water: 8000, waste: 0.2, packaging: "Cardboard box", recyclable: false, lifespan: "3–5 years",
-    circularity: 42, confidence: 0.6, source: "PEF estimate", updated: "Mar 2026",
-    dims: { climate: 36, water: 20, waste: 48, circularity: 42, biodiversity: 34, resource: 40 },
-    insight: "Leather tanning is one of the most water- and chemical-intensive steps in any garment supply chain.",
-    alt: ["recycled-jacket"] },
-
-  /* ---------------- Home ---------------- */
-  { id: "led-bulb", name: "LED Light Bulb", brand: "Generic", category: "Home", country: "China", score: 91,
-    carbon: 1.2, water: 5, waste: 0.02, packaging: "Cardboard", recyclable: true, lifespan: "10+ years",
-    circularity: 80, confidence: 0.7, source: "Category estimate", updated: "Feb 2026",
-    dims: { climate: 92, water: 90, waste: 88, circularity: 80, biodiversity: 84, resource: 78 },
-    insight: "Lifetime footprint is dominated by the electricity it uses — LEDs need a fraction of an incandescent's power.",
-    alt: [] },
-  { id: "incandescent-bulb", name: "Incandescent Bulb", brand: "Generic", category: "Home", country: "China", score: 34,
-    carbon: 9, water: 3, waste: 0.05, packaging: "Cardboard", recyclable: false, lifespan: "~1 year",
-    circularity: 20, confidence: 0.65, source: "Category estimate", updated: "Feb 2026",
-    dims: { climate: 28, water: 92, waste: 40, circularity: 20, biodiversity: 60, resource: 30 },
-    insight: "Most of the footprint comes from wasted heat — over 90% of the energy in never becomes light.",
-    alt: ["led-bulb"] },
-  { id: "dish-soap-refill", name: "Dish Soap (refill pouch)", brand: "Generic", category: "Home", country: "—", score: 84,
-    carbon: 0.3, water: 40, waste: 0.01, packaging: "Refill pouch", recyclable: true, lifespan: null,
-    circularity: 76, confidence: 0.6, source: "Category estimate", updated: "Apr 2026",
-    dims: { climate: 82, water: 78, waste: 90, circularity: 76, biodiversity: 74, resource: 80 },
-    insight: "A thin refill pouch uses far less plastic per wash than a rigid bottle bought new each time.",
-    alt: [] },
-  { id: "dish-soap-plastic", name: "Dish Soap (plastic bottle)", brand: "Generic", category: "Home", country: "—", score: 55,
-    carbon: 0.5, water: 45, waste: 0.08, packaging: "Single-use plastic bottle", recyclable: true, lifespan: null,
-    circularity: 45, confidence: 0.65, source: "Category estimate", updated: "Apr 2026",
-    dims: { climate: 56, water: 72, waste: 38, circularity: 45, biodiversity: 60, resource: 50 },
-    insight: "The rigid bottle is recyclable, but a new one made per purchase adds up versus a refill.",
-    alt: ["dish-soap-refill"] },
-  { id: "paper-towels", name: "Paper Towels (per roll)", brand: "Generic", category: "Home", country: "USA", score: 41,
-    carbon: 1.1, water: 70, waste: 0.15, packaging: "Plastic wrap", recyclable: false, lifespan: "Single use",
-    circularity: 25, confidence: 0.6, source: "Category estimate", updated: "Mar 2026",
-    dims: { climate: 40, water: 58, waste: 20, circularity: 25, biodiversity: 42, resource: 38 },
-    insight: "Virgin pulp and a single-use design mean the footprint resets with every roll.",
-    alt: ["reusable-cloth"] },
-  { id: "reusable-cloth", name: "Reusable Cleaning Cloth", brand: "Generic", category: "Home", country: "—", score: 93,
-    carbon: 0.05, water: 8, waste: 0.01, packaging: "None", recyclable: true, lifespan: "3+ years",
-    circularity: 92, confidence: 0.65, source: "Category estimate", updated: "Mar 2026",
-    dims: { climate: 94, water: 92, waste: 96, circularity: 92, biodiversity: 88, resource: 90 },
-    insight: "Washed and reused hundreds of times, its per-use footprint is nearly negligible.",
-    alt: [] },
-
-  /* ---------------- Travel & Hotels ---------------- */
-  { id: "hotel-eco", name: "Hotel Stay (eco-certified)", brand: "—", category: "Hotels", country: "—", score: 82,
-    carbon: 12, water: 300, waste: 0.5, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.58, source: "Category estimate", updated: "May 2026",
-    dims: { climate: 78, water: 74, waste: 80, circularity: 70, biodiversity: 76, resource: 80 },
-    insight: "Solar offsetting, linen-reuse programs, and low-flow fixtures meaningfully cut a stay's footprint.",
-    alt: [] },
-  { id: "hotel-standard", name: "Hotel Stay (standard)", brand: "—", category: "Hotels", country: "—", score: 49,
-    carbon: 32, water: 550, waste: 1.2, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.58, source: "Category estimate", updated: "May 2026",
-    dims: { climate: 44, water: 48, waste: 40, circularity: 38, biodiversity: 50, resource: 46 },
-    insight: "Daily linen changes, single-use toiletries, and no renewable energy commitment keep this mid-pack.",
-    alt: ["hotel-eco"] },
-  { id: "rental-car", name: "Rental Car, petrol (100km)", brand: "—", category: "Travel", country: "—", score: 24,
-    carbon: 21, water: 5, waste: 0.1, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.75, source: "DEFRA", updated: "Apr 2026",
-    dims: { climate: 20, water: 88, waste: 86, circularity: 50, biodiversity: 40, resource: 22 },
-    insight: "Per-passenger emissions from a petrol car are several times higher than rail for the same trip.",
-    alt: ["train-ticket", "electric-car"] },
-  { id: "electric-car", name: "Electric Car (100km)", brand: "—", category: "Travel", country: "—", score: 66,
-    carbon: 9, water: 4, waste: 0.05, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.7, source: "EEA", updated: "Apr 2026",
-    dims: { climate: 64, water: 90, waste: 90, circularity: 55, biodiversity: 58, resource: 52 },
-    insight: "Footprint depends heavily on grid mix — cleaner in countries with more renewable electricity.",
-    alt: ["train-ticket"] },
-  { id: "long-haul-flight", name: "Long-Haul Flight (per 1000km)", brand: "—", category: "Travel", country: "—", score: 15,
-    carbon: 115, water: 8, waste: 0.4, packaging: "—", recyclable: null, lifespan: null,
-    circularity: null, confidence: 0.85, source: "DEFRA · EEA", updated: "Apr 2026",
-    dims: { climate: 8, water: 85, waste: 80, circularity: 55, biodiversity: 38, resource: 18 },
-    insight: "Long-haul cruise segments are more fuel-efficient per km than short-haul, but total distance still dominates the footprint.",
-    alt: [] },
-
-  /* ---------------- Personal Care ---------------- */
-  { id: "shampoo-bar", name: "Shampoo Bar", brand: "Generic", category: "Personal Care", country: "—", score: 89,
-    carbon: 0.3, water: 15, waste: 0.01, packaging: "Paper wrap", recyclable: true, lifespan: "~80 washes",
-    circularity: 85, confidence: 0.6, source: "Category estimate", updated: "May 2026",
-    dims: { climate: 88, water: 90, waste: 94, circularity: 85, biodiversity: 80, resource: 84 },
-    insight: "No water is shipped and no bottle is made — concentrated bars cut packaging and transport weight.",
-    alt: [] },
-  { id: "plastic-shampoo", name: "Shampoo (plastic bottle)", brand: "Generic", category: "Personal Care", country: "—", score: 48,
-    carbon: 0.6, water: 25, waste: 0.12, packaging: "Plastic bottle", recyclable: true, lifespan: null,
-    circularity: 40, confidence: 0.65, source: "Category estimate", updated: "May 2026",
-    dims: { climate: 48, water: 62, waste: 34, circularity: 40, biodiversity: 50, resource: 46 },
-    insight: "Mostly water by weight, so a plastic bottle is shipping and packaging water — the bar skips both.",
-    alt: ["shampoo-bar"] },
-
-  /* ---------------- Restaurants ---------------- */
-  { id: "fast-food-meal", name: "Fast Food Combo Meal", brand: "Generic", category: "Restaurants", country: "—", score: 33,
-    carbon: 4.5, water: 900, waste: 0.4, packaging: "Disposable", recyclable: false, lifespan: null,
-    circularity: 30, confidence: 0.55, source: "Category estimate", updated: "Jun 2026",
-    dims: { climate: 30, water: 34, waste: 22, circularity: 30, biodiversity: 32, resource: 34 },
-    insight: "Beef-based mains and fully disposable packaging stack two of the biggest impact drivers together.",
-    alt: ["farm-to-table-meal", "lentil-bowl"] },
-  { id: "farm-to-table-meal", name: "Farm-to-Table Meal", brand: "Generic", category: "Restaurants", country: "—", score: 77,
-    carbon: 1.8, water: 350, waste: 0.1, packaging: "Reusable dishware", recyclable: true, lifespan: null,
-    circularity: 78, confidence: 0.55, source: "Category estimate", updated: "Jun 2026",
-    dims: { climate: 74, water: 70, waste: 86, circularity: 78, biodiversity: 72, resource: 76 },
-    insight: "Local, seasonal sourcing and reusable dishware cut both transport emissions and packaging waste.",
-    alt: [] },
+  ...foodData,
+  ...homeData,
+  ...fashionData,
+  ...travelData,
+  ...electronicsData,
+  ...personalCareData,
 ];
 
-const CATEGORY_AVG = 61;
+// Category chips are derived from whatever categories actually exist in the
+// merged data, so this updates automatically as products are added/removed.
+const CATEGORIES = [...new Set(PRODUCTS.map((p) => p.category))];
 
+// Weekly tracker history, loaded from daily.json. Expected shape:
+// [{ "day": "Mon", "score": 64 }, { "day": "Tue", "score": 71 }, ...]
+// or { "history": [...] } / { "week": [...] } — handles either.
+const WEEK_HISTORY = Array.isArray(dailyData)
+  ? dailyData
+  : dailyData.history || dailyData.week || [];
+
+// Category average score, used on the profile page ("X points above/below average").
+const CATEGORY_AVG = PRODUCTS.length
+  ? Math.round(PRODUCTS.reduce((sum, p) => sum + p.score, 0) / PRODUCTS.length)
+  : 0;
+
+// in CompareView:
+const [leftId, setLeftId] = useState(PRODUCTS[0]?.id);
+const [rightId, setRightId] = useState(PRODUCTS[1]?.id ?? PRODUCTS[0]?.id);
+
+// in TrackerView:
+const [todayLog, setTodayLog] = useState(
+  [PRODUCTS[0]?.id, PRODUCTS[1]?.id].filter(Boolean)
+);
+const [picker, setPicker] = useState(PRODUCTS[0]?.id ?? "");
 /* ---------------------------------------------------------------------- */
 /*  HELPERS                                                                */
 /* ---------------------------------------------------------------------- */
