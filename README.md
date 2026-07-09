@@ -50,5 +50,5 @@ I developed EcoStreak to bridge the gap between rigorous scientific datasets and
 ## Professional Contact
 I am actively seeking professional opportunities in Sustainability Consulting, ESG Strategy Analysis, and Corporate Environmental Data Management.
 
-* **LinkedIn:** [Insert Link]
-* **Email:** [Insert Email]
+* **LinkedIn:** [My Linkedin](Linkedin.com/in/swati-raina-312638b8)
+* **Email:** [My E-mail](rainaswati99@gmail.com)
